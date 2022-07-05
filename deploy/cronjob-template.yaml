@@ -20,7 +20,7 @@ objects:
               image: quay.io/mtsre/mtsre-clusters-checker:${IMAGE_TAG}
               imagePullPolicy: Always
               command:
-              - /clusters-checker
+              - /ocm/clusters-checker
               - scan
               - --envs-and-org-ids=production:$(PRODUCTION_ORGANIZATION_ID)
               - --envs-and-org-ids=staging:$(STAGING_ORGANIZATION_ID)
@@ -28,6 +28,8 @@ objects:
               - --slack-channel-id=$(SLACK_CHANNEL_ID)
               ## All the Secrets resources coming securely from app-interface - <app-interface-repo>/data/services/addons/cicd/ci-ext/saas-mtsre-workloads.yaml
               env:
+              - name: PRODUCTION_ORGANIZATION_ID
+                value: "/ocm/.config/ocm/ocm.json"
               - name: PRODUCTION_ORGANIZATION_ID
                 valueFrom:
                   secretKeyRef:
