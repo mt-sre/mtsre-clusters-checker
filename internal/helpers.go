@@ -167,7 +167,7 @@ func NotifyOnSlack(token, channel, message string) error {
 
 	success, ok := res["ok"].(bool)
 	if !success || !ok {
-		return fmt.Errorf("the Slack API request didn't succeed: %+v", resp.Body)
+		return fmt.Errorf("the Slack API request didn't succeed: %+v", res)
 	}
 
 	return nil
