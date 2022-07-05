@@ -54,6 +54,7 @@ func NewCommand() *cobra.Command {
 }
 
 func runE(flags *flagpole) error {
+	log.Println(fmt.Sprintf("flags: %+v", *flags))
 	ocmToken := flags.OcmToken
 	if ocmToken == "" {
 		return fmt.Errorf("OCM token not found to be provided")
