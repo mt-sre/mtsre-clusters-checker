@@ -16,11 +16,20 @@ RUN make build
 # --- stage 2 ---
 FROM registry.access.redhat.com/ubi8/ubi-minimal@sha256:574f201d7ed185a9932c91cef5d397f5298dff9df08bc2ebb266c6d1e6284cd1
 
-USER root
-RUN mkdir -p /ocm/.config/ocm/
-RUN chown noroot /ocm
+# shadow-utils contains adduser and groupadd binaries
+RUN microdnf install shadow-utils \
+	&& groupadd --gid 1000 noroot \
+	&& adduser \
+		--no-create-home \
+		--no-user-group \
+		--uid 1000 \
+		--gid 1000 \
+		noroot
 
-USER noroot
-COPY --from=builder /build/bin/clusters-checker /ocm/clusters-checker
+WORKDIR /
 
-ENTRYPOINT ["/ocm/clusters-checker"]
+COPY --from=builder /build/bin/clusters-checker /usr/local/bin/
+
+USER "noroot"
+
+ENTRYPOINT ["/usr/local/bin/clusters-checker", "scan"]
