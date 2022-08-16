@@ -19,17 +19,17 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal@sha256:574f201d7ed185a9932c91ce
 # shadow-utils contains adduser and groupadd binaries
 RUN microdnf install shadow-utils \
 	&& groupadd --gid 1000 noroot \
-	&& adduser \
-		--no-create-home \
-		--no-user-group \
-		--uid 1000 \
-		--gid 1000 \
-		noroot
+	&& adduser --uid 1000 -g noroot noroot
 
-WORKDIR /
+WORKDIR /home/noroot
 
-COPY --from=builder /build/bin/clusters-checker /usr/local/bin/
+ENV OCM_CONFIG=/home/noroot/ocm/ocm.json
+
+COPY --from=builder /build/bin/clusters-checker /home/noroot/clusters-checker
+
+RUN chmod -R 755 /home/noroot
+RUN chown -R noroot:noroot /home/noroot
 
 USER "noroot"
 
-ENTRYPOINT ["/usr/local/bin/clusters-checker", "scan"]
+CMD ["/home/noroot/clusters-checker", "scan"]
